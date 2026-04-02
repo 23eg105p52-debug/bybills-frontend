@@ -11,6 +11,7 @@ import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import "./App.css";
 
+// Component to display current page title
 function PageTitle() {
   const location = useLocation();
   const titles = {
@@ -32,9 +33,13 @@ function App() {
   const [user, setUser] = useState(null);
   const [page, setPage] = useState("login");
 
+  // If user is not logged in, show login/signup
   if (!user) {
     return page === "login" ? (
-      <Login onLogin={(name) => setUser(name)} goToSignup={() => setPage("signup")} />
+      <Login
+        onLogin={(name) => setUser(name)}
+        goToSignup={() => setPage("signup")}
+      />
     ) : (
       <Signup goToLogin={() => setPage("login")} />
     );
@@ -43,6 +48,7 @@ function App() {
   return (
     <Router>
       <div className="layout">
+        {/* Sidebar */}
         <div className="sidebar">
           <h2 className="logo">BYBills</h2>
           <Link to="/">🏠 Dashboard</Link>
@@ -51,11 +57,27 @@ function App() {
           <Link to="/status">⚠ Status</Link>
           <Link to="/calendar">📅 Calendar</Link>
         </div>
+
+        {/* Main content */}
         <div className="main">
           <div className="header">
             <PageTitle />
-            <button onClick={() => setUser(null)}>Logout</button>
+            <button
+              onClick={() => setUser(null)}
+              style={{
+                background: "#ef4444",
+                color: "#fff",
+                border: "none",
+                borderRadius: "8px",
+                padding: "6px 12px",
+                cursor: "pointer",
+              }}
+            >
+              Logout
+            </button>
           </div>
+
+          {/* Routes */}
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/bills" element={<Bills />} />
