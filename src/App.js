@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Routes, Route, Link, useLocation } from "react-router-dom";
+import { HashRouter as Router, Routes, Route, Link, useLocation } from "react-router-dom";
 import { useState } from "react";
 import Home from "./pages/Home";
 import Bills from "./pages/Bills";
@@ -9,12 +9,10 @@ import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { HashRouter as Router } from "react-router-dom";
 import "./App.css";
 
 function PageTitle() {
   const location = useLocation();
-
   const titles = {
     "/": "Dashboard",
     "/bills": "Bills",
@@ -22,37 +20,29 @@ function PageTitle() {
     "/status": "Status",
     "/calendar": "Calendar",
   };
-
-  return <h2>{titles[location.pathname] || "BYBills"}</h2>;
-  <ToastContainer position="top-right" autoClose={2000} />
+  return (
+    <>
+      <h2>{titles[location.pathname] || "BYBills"}</h2>
+      <ToastContainer position="top-right" autoClose={2000} />
+    </>
+  );
 }
 
 function App() {
-
   const [user, setUser] = useState(null);
-  const [page, setPage] = useState("login"); // login or signup
+  const [page, setPage] = useState("login");
 
-  // 🔐 Show Login / Signup first
   if (!user) {
     return page === "login" ? (
-      <Login
-        onLogin={(name) => setUser(name)}
-        goToSignup={() => setPage("signup")}
-      />
+      <Login onLogin={(name) => setUser(name)} goToSignup={() => setPage("signup")} />
     ) : (
       <Signup goToLogin={() => setPage("login")} />
     );
   }
 
-  const handleLogout = () => {
-    setUser(null);
-  };
-
   return (
     <Router>
       <div className="layout">
-
-        {/* Sidebar */}
         <div className="sidebar">
           <h2 className="logo">BYBills</h2>
           <Link to="/">🏠 Dashboard</Link>
@@ -61,14 +51,11 @@ function App() {
           <Link to="/status">⚠ Status</Link>
           <Link to="/calendar">📅 Calendar</Link>
         </div>
-
-        {/* Main */}
         <div className="main">
           <div className="header">
             <PageTitle />
-            <button onClick={handleLogout}>Logout</button>
+            <button onClick={() => setUser(null)}>Logout</button>
           </div>
-
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/bills" element={<Bills />} />
