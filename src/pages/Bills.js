@@ -1,37 +1,26 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-
 function Bills() {
-
-  const API = "http://localhost:8080/api/bills";
-
+  const API = "https://bybills-backend-production.up.railway.app/api/bills";
   const [bills, setBills] = useState([]);
-
-  // ✅ Load recurring info from localStorage
   const recurringBills = JSON.parse(localStorage.getItem("recurringBills") || "{}");
-
   useEffect(() => {
     fetchBills();
   }, []);
-
   useEffect(() => {
     if (bills.length === 0) return;
-
     const today = new Date().toISOString().split("T")[0];
     const dueBills = bills.filter(b => b.dueDate === today);
-
     if (dueBills.length > 0) {
       const names = dueBills.map(b => b.billName).join(", ");
       new Audio("https://actions.google.com/sounds/v1/alarms/beep_short.ogg").play();
       alert("⚠ Bills Due Today: " + names);
     }
   }, [bills]);
-
   const fetchBills = async () => {
     const res = await axios.get(API);
     setBills(res.data);
   };
-
   const handlePayment = (id) => {
     alert("✅ Payment Successful!");
     const updatedBills = bills.map(b =>
@@ -39,15 +28,10 @@ function Bills() {
     );
     setBills(updatedBills);
   };
-
   return (
-
     <div className="card">
-
       <h2>All Bills</h2>
-
       <table>
-
         <thead>
           <tr>
             <th>Bill</th>
@@ -58,21 +42,14 @@ function Bills() {
             <th>Action</th>
           </tr>
         </thead>
-
         <tbody>
           {bills.map(b => {
-
-            // ✅ Check if this bill is recurring from localStorage
             const info = recurringBills[b.id];
-
             return (
               <tr key={b.id}>
-
                 <td>{b.billName}</td>
                 <td>₹ {b.amount}</td>
                 <td>{b.dueDate}</td>
-
-                {/* ✅ Recurring Badge */}
                 <td>
                   {info?.recurring ? (
                     <span style={{
@@ -92,13 +69,9 @@ function Bills() {
                     </span>
                   )}
                 </td>
-
-                {/* Status */}
                 <td>
                   {b.status === "Paid" ? "🟢 Paid" : "🔴 Pending"}
                 </td>
-
-                {/* Pay Button */}
                 <td>
                   {b.status !== "Paid" && (
                     <button onClick={() => handlePayment(b.id)}>
@@ -106,16 +79,12 @@ function Bills() {
                     </button>
                   )}
                 </td>
-
               </tr>
             );
           })}
         </tbody>
-
       </table>
-
     </div>
   );
 }
-
 export default Bills;
