@@ -5,13 +5,13 @@ function AddBill() {
   const API = "https://bybills-backend-production.up.railway.app/api/bills";
 
   const [billName, setBillName] = useState("");
-  const [amount, setAmount]     = useState("");
-  const [dueDate, setDueDate]   = useState("");
-  const [recurring, setRecurring]   = useState(false);
-  const [frequency, setFrequency]   = useState("monthly");
-  const [loading, setLoading]       = useState(false);
-  const [success, setSuccess]       = useState(false);
-  const [errors, setErrors]         = useState({});
+  const [amount, setAmount] = useState("");
+  const [dueDate, setDueDate] = useState("");
+  const [recurring, setRecurring] = useState(false);
+  const [frequency, setFrequency] = useState("monthly");
+  const [loading, setLoading] = useState(false);
+  const [success, setSuccess] = useState(false);
+  const [errors, setErrors] = useState({});
 
   const validate = () => {
     const e = {};
@@ -44,9 +44,9 @@ function AddBill() {
   };
 
   const freqOptions = [
-    { value: "weekly",  label: "Weekly",  icon: "📅" },
+    { value: "weekly", label: "Weekly", icon: "📅" },
     { value: "monthly", label: "Monthly", icon: "🗓" },
-    { value: "yearly",  label: "Yearly",  icon: "📆" },
+    { value: "yearly", label: "Yearly", icon: "📆" },
   ];
 
   return (
@@ -70,6 +70,7 @@ function AddBill() {
           Bill added successfully!
         </div>
       )}
+
       <div style={{
         background: "#fff",
         borderRadius: "22px",
@@ -103,5 +104,67 @@ function AddBill() {
             </div>
           </div>
         </div>
+
         <div style={{ padding:"30px 32px" }}>
-          <div style={{ marginBotto
+          <div style={{ marginBottom:"16px" }}>
+            <label>Bill Name</label>
+            <input 
+              type="text" 
+              value={billName} 
+              onChange={e => setBillName(e.target.value)} 
+              style={{ width:"100%", padding:"10px", borderRadius:"8px", border:"1px solid #ccc", marginTop:"6px" }}
+            />
+            {errors.billName && <p style={{ color:"red", fontSize:"12px" }}>{errors.billName}</p>}
+          </div>
+
+          <div style={{ marginBottom:"16px" }}>
+            <label>Amount</label>
+            <input 
+              type="number" 
+              value={amount} 
+              onChange={e => setAmount(e.target.value)} 
+              style={{ width:"100%", padding:"10px", borderRadius:"8px", border:"1px solid #ccc", marginTop:"6px" }}
+            />
+            {errors.amount && <p style={{ color:"red", fontSize:"12px" }}>{errors.amount}</p>}
+          </div>
+
+          <div style={{ marginBottom:"16px" }}>
+            <label>Due Date</label>
+            <input 
+              type="date" 
+              value={dueDate} 
+              onChange={e => setDueDate(e.target.value)} 
+              style={{ width:"100%", padding:"10px", borderRadius:"8px", border:"1px solid #ccc", marginTop:"6px" }}
+            />
+            {errors.dueDate && <p style={{ color:"red", fontSize:"12px" }}>{errors.dueDate}</p>}
+          </div>
+
+          <div style={{ marginBottom:"16px" }}>
+            <label>
+              <input type="checkbox" checked={recurring} onChange={e => setRecurring(e.target.checked)} /> Recurring
+            </label>
+            {recurring && (
+              <select value={frequency} onChange={e => setFrequency(e.target.value)} style={{ marginTop:"6px", width:"100%", padding:"10px", borderRadius:"8px", border:"1px solid #ccc" }}>
+                {freqOptions.map(f => <option key={f.value} value={f.value}>{f.icon} {f.label}</option>)}
+              </select>
+            )}
+          </div>
+
+          <button 
+            onClick={addBill} 
+            disabled={loading} 
+            style={{
+              width:"100%", padding:"12px", border:"none", borderRadius:"10px",
+              background:"#1e40af", color:"#fff", fontWeight:"700", fontSize:"16px",
+              cursor: loading ? "not-allowed" : "pointer"
+            }}
+          >
+            {loading ? "Adding..." : "Add Bill"}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export default AddBill;
