@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from "react";
+// AddBill.js
+import React, { useState } from "react";
 import axios from "axios";
 
 function AddBill() {
@@ -14,6 +15,7 @@ function AddBill() {
   const [errors, setErrors] = useState({});
   const [networkError, setNetworkError] = useState("");
 
+  // Validate inputs
   const validate = () => {
     const e = {};
     if (!billName.trim()) e.billName = "Bill name is required";
@@ -23,23 +25,32 @@ function AddBill() {
     return Object.keys(e).length === 0;
   };
 
+  // Add bill function
   const addBill = async () => {
     if (!validate()) return;
+
     setLoading(true);
     setNetworkError("");
-    try {
-      const bill = { billName, amount, dueDate };
-      const res = await axios.post(API, bill);
 
+    try {
+      const res = await axios.post(
+        API,
+        { billName, amount, dueDate },
+        { headers: { "Content-Type": "application/json" } } // Important
+      );
+
+      // Handle recurring bills
       if (recurring) {
         const recurringBills = JSON.parse(localStorage.getItem("recurringBills") || "{}");
         recurringBills[res.data.id] = { recurring: true, frequency };
         localStorage.setItem("recurringBills", JSON.stringify(recurringBills));
       }
 
+      // Show success message
       setSuccess(true);
       setTimeout(() => setSuccess(false), 3000);
 
+      // Reset form
       setBillName("");
       setAmount("");
       setDueDate("");
@@ -48,8 +59,9 @@ function AddBill() {
       setErrors({});
     } catch (err) {
       console.error(err);
-      setNetworkError("❌ Failed to connect to backend. Please try again.");
+      setNetworkError("❌ Failed to connect to backend. Please check your network or CORS settings.");
     }
+
     setLoading(false);
   };
 
