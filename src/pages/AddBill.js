@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
 
 function AddBill() {
@@ -12,6 +12,7 @@ function AddBill() {
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [errors, setErrors] = useState({});
+  const [networkError, setNetworkError] = useState("");
 
   const validate = () => {
     const e = {};
@@ -25,29 +26,32 @@ function AddBill() {
   const addBill = async () => {
     if (!validate()) return;
     setLoading(true);
+    setNetworkError("");
     try {
       const bill = { billName, amount, dueDate };
       const res = await axios.post(API, bill);
+
       if (recurring) {
         const recurringBills = JSON.parse(localStorage.getItem("recurringBills") || "{}");
         recurringBills[res.data.id] = { recurring: true, frequency };
         localStorage.setItem("recurringBills", JSON.stringify(recurringBills));
       }
+
       setSuccess(true);
       setTimeout(() => setSuccess(false), 3000);
-      setBillName(""); setAmount(""); setDueDate("");
-      setRecurring(false); setFrequency("monthly"); setErrors({});
-    } catch {
-      alert("❌ Failed to add bill. Please try again.");
+
+      setBillName("");
+      setAmount("");
+      setDueDate("");
+      setRecurring(false);
+      setFrequency("monthly");
+      setErrors({});
+    } catch (err) {
+      console.error(err);
+      setNetworkError("❌ Failed to connect to backend. Please try again.");
     }
     setLoading(false);
   };
-
-  const freqOptions = [
-    { value: "weekly", label: "Weekly", icon: "📅" },
-    { value: "monthly", label: "Monthly", icon: "🗓" },
-    { value: "yearly", label: "Yearly", icon: "📆" },
-  ];
 
   return (
     <div style={{ maxWidth: "580px", margin: "0 auto", fontFamily: "'Nunito', sans-serif" }}>
@@ -63,12 +67,15 @@ function AddBill() {
           gap: "10px",
           fontWeight: "700",
           fontSize: "14px",
-          boxShadow: "0 4px 20px rgba(34,197,94,0.3)",
-          animation: "slideDown 0.4s cubic-bezier(.22,1,.36,1)"
+          boxShadow: "0 4px 20px rgba(34,197,94,0.3)"
         }}>
           <span style={{ fontSize: "1.3rem" }}>✅</span>
           Bill added successfully!
         </div>
+      )}
+
+      {networkError && (
+        <div style={{ color: "red", marginBottom: "16px" }}>{networkError}</div>
       )}
 
       <div style={{
@@ -145,7 +152,9 @@ function AddBill() {
             </label>
             {recurring && (
               <select value={frequency} onChange={e => setFrequency(e.target.value)} style={{ marginTop:"6px", width:"100%", padding:"10px", borderRadius:"8px", border:"1px solid #ccc" }}>
-                {freqOptions.map(f => <option key={f.value} value={f.value}>{f.icon} {f.label}</option>)}
+                <option value="weekly">📅 Weekly</option>
+                <option value="monthly">🗓 Monthly</option>
+                <option value="yearly">📆 Yearly</option>
               </select>
             )}
           </div>
