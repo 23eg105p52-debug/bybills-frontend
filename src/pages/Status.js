@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 
 function Status() {
-  const API = "http://localhost:8080/api/bills";
+  const API = "https://bybills-backend-production.up.railway.app/api/bills";
   const [bills, setBills] = useState([]);
   const [loaded, setLoaded] = useState(false);
 
